@@ -1,0 +1,242 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Memories – Unified API",
+    "version": "1.1.2",
+    "description": "Gateway spec combining microservices: Identity, MemoryArchive, Profile, Notification, AccessControl, AuditLogging"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Local Gateway"
+    }
+  ],
+  "tags": [
+    { "name": "Identity" },
+    { "name": "MemoryArchive" },
+    { "name": "AccessControl" },
+    { "name": "AuditLogging" },
+    { "name": "System" }
+  ],
+  "paths": {
+    "/health/ready": {
+      "get": {
+        "tags": [ "System" ],
+        "summary": "Gateway readiness",
+        "security": [],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/identity/register": {
+      "post": {
+        "tags": [ "Identity" ],
+        "summary": "Register new user",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RegisterRequest" } } }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/JwtResponse" } } }
+          }
+        }
+      }
+    },
+    "/identity/login": {
+      "post": {
+        "tags": [ "Identity" ],
+        "summary": "Login",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/LoginRequest" } } }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/JwtResponse" } } }
+          }
+        }
+      }
+    },
+    "/auditlogs": {
+      "get": {
+        "tags": [ "AuditLogging" ],
+        "summary": "Search logs",
+        "parameters": [
+          {
+            "name": "action",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "nullable": true
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PagedAuditLogDto" } } }
+          }
+        }
+      },
+      "post": {
+        "tags": [ "AuditLogging" ],
+        "summary": "Create log",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CreateAuditLogRequest" } } }
+        },
+        "responses": {
+          "200": {
+            "description": "Created",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AuditLogDto" } } }
+          }
+        }
+      }
+    },
+    "/auditlogs/{id}": {
+      "get": {
+        "tags": [ "AuditLogging" ],
+        "summary": "Get by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AuditLogDto" } } }
+          }
+        }
+      },
+      "delete": {
+        "tags": [ "AuditLogging" ],
+        "summary": "Delete by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": { "204": { "description": "Deleted" } }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "username": { "type": "string" },
+          "password": { "type": "string" }
+        }
+      },
+      "RegisterRequest": {
+        "type": "object",
+        "properties": {
+          "username": { "type": "string" },
+          "password": { "type": "string" },
+          "email": { "type": "string" }
+        }
+      },
+      "JwtResponse": {
+        "type": "object",
+        "properties": {
+          "accessToken": { "type": "string" },
+          "refreshToken": { "type": "string" }
+        }
+      },
+      "CreateAuditLogRequest": {
+        "type": "object",
+        "properties": {
+          "action": { "type": "string" },
+          "target": { "type": "string" },
+          "details": { "type": "string" },
+          "result": { "type": "string" },
+          "data": { "type": "string" },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ipAddress": { "type": "string" },
+          "userAgent": { "type": "string" }
+        }
+      },
+      "AuditLogDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "action": { "type": "string" },
+          "target": { "type": "string" },
+          "details": { "type": "string" },
+          "result": { "type": "string" },
+          "data": { "type": "string" },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PagedAuditLogDto": {
+        "type": "object",
+        "properties": {
+          "totalCount": { "type": "integer" },
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AuditLogDto" }
+          }
+        }
+      }
+    }
+  }
+}

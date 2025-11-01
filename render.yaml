@@ -1,0 +1,140 @@
+services:
+  # 1. API Gateway
+  - type: web
+    name: api-gateway
+    runtime: docker
+    repo: https://github.com/AndreyFesenko/Memories-alone
+    region: frankfurt
+    branch: master
+    plan: free
+    dockerfilePath: ./src/APIGateway/Dockerfile
+    dockerContext: ./src
+    envVars:
+      - key: DOCKER_CONFIG_SECRET
+        value: user-gcr-docker-config
+
+  # 2. IdentityService
+  - type: web
+    name: identity-service
+    runtime: docker
+    repo: https://github.com/AndreyFesenko/Memories-alone
+    region: frankfurt
+    branch: master
+    plan: free
+    dockerfilePath: ./src/IdentityService/Dockerfile
+    dockerContext: ./src
+    envVars:
+      - key: DOCKER_CONFIG_SECRET
+        value: user-gcr-docker-config
+      - key: ConnectionStrings__Default
+        sync: false
+
+  # 3. ProfileService
+  - type: web
+    name: profile-service
+    runtime: docker
+    repo: https://github.com/AndreyFesenko/Memories-alone
+    region: frankfurt
+    branch: master
+    plan: free
+    dockerfilePath: ./src/ProfileService/Dockerfile
+    dockerContext: ./src
+    envVars:
+      - key: DOCKER_CONFIG_SECRET
+        value: user-gcr-docker-config
+      - key: ConnectionStrings__Default
+        sync: false
+
+  # 4. MemoryArchiveService
+  - type: web
+    name: memory-service
+    runtime: docker
+    repo: https://github.com/AndreyFesenko/Memories-alone
+    region: frankfurt
+    branch: master
+    plan: free
+    dockerfilePath: ./src/MemoryArchiveService/Dockerfile
+    dockerContext: ./src
+    envVars:
+      - key: DOCKER_CONFIG_SECRET
+        value: user-gcr-docker-config
+      - key: ConnectionStrings__Default
+        sync: false
+      - key: Supabase__S3__Endpoint
+        sync: false
+      - key: Supabase__S3__AccessKey
+        sync: false
+      - key: Supabase__S3__SecretKey
+        sync: false
+
+  # 5. NotificationService
+  - type: web
+    name: notification-service
+    runtime: docker
+    repo: https://github.com/AndreyFesenko/Memories-alone
+    region: frankfurt
+    branch: master
+    plan: free
+    dockerfilePath: ./src/NotificationService/Dockerfile
+    dockerContext: ./src
+    envVars:
+      - key: DOCKER_CONFIG_SECRET
+        value: user-gcr-docker-config
+      - key: ConnectionStrings__Default
+        sync: false
+      - key: RabbitMq__Host
+        sync: false
+      - key: RabbitMq__User
+        sync: false
+      - key: RabbitMq__Password
+        sync: false
+      - key: RabbitMq__Queue
+        sync: false
+      - key: Redis__Host
+        sync: false
+      - key: Redis__Port
+        sync: false
+      - key: Redis__Password
+        sync: false
+      - key: Redis__Ssl
+        sync: false
+
+  # 6. AccessControlService
+  - type: web
+    name: access-control-service
+    runtime: docker
+    repo: https://github.com/AndreyFesenko/Memories-alone
+    region: frankfurt
+    branch: master
+    plan: free
+    dockerfilePath: ./src/AccessControlService/Dockerfile
+    dockerContext: ./src
+    envVars:
+      - key: DOCKER_CONFIG_SECRET
+        value: user-gcr-docker-config
+      - key: ConnectionStrings__Default
+        sync: false
+
+  # 7. AuditLoggingService
+  - type: web
+    name: audit-logging-service
+    runtime: docker
+    repo: https://github.com/AndreyFesenko/Memories-alone
+    region: frankfurt
+    branch: master
+    plan: free
+    dockerfilePath: ./src/AuditLoggingService/Dockerfile
+    dockerContext: ./src
+    envVars:
+      - key: DOCKER_CONFIG_SECRET
+        value: user-gcr-docker-config
+      - key: ConnectionStrings__Default
+        sync: false
+      - key: RabbitMq__Host
+        sync: false
+      - key: RabbitMq__User
+        sync: false
+      - key: RabbitMq__Password
+        sync: false
+      - key: RabbitMq__Queue
+        sync: false
