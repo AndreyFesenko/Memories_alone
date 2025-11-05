@@ -137,4 +137,4 @@ services:
       - key: RabbitMq__Password
         sync: false
       - key: RabbitMq__Queue
-        sync: false
+        sync: false 
